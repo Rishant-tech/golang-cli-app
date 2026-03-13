@@ -6,12 +6,21 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgconn"
-	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/rishant-tech/golang-cli-app/internal/config"
 	"github.com/rishant-tech/golang-cli-app/internal/models"
 	"golang.org/x/crypto/bcrypt"
 )
+
+// dbIface is the minimal database interface required by the auth services.
+// Using an interface here (instead of *pgxpool.Pool directly) allows the
+// services to be tested with a mock database without spinning up a real Postgres instance.
+// *pgxpool.Pool satisfies this interface automatically.
+type dbIface interface {
+	Exec(ctx context.Context, sql string, arguments ...any) (pgconn.CommandTag, error)
+	QueryRow(ctx context.Context, sql string, args ...any) pgx.Row
+}
 
 // Sentinel errors returned by the auth service.
 var (
@@ -25,12 +34,13 @@ var (
 
 // Service handles registration, login, and account management.
 type Service struct {
-	db  *pgxpool.Pool
+	db  dbIface
 	cfg *config.Config
 }
 
 // NewService creates a new auth service.
-func NewService(db *pgxpool.Pool, cfg *config.Config) *Service {
+// Accepts dbIface so tests can inject a mock — *pgxpool.Pool satisfies this interface.
+func NewService(db dbIface, cfg *config.Config) *Service {
 	return &Service{db: db, cfg: cfg}
 }
 

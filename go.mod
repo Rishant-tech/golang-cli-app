@@ -7,6 +7,7 @@ require (
 	github.com/golang-migrate/migrate/v4 v4.19.1
 	github.com/jackc/pgx/v5 v5.8.0
 	github.com/mdp/qrterminal/v3 v3.2.1
+	github.com/pashagolub/pgxmock/v3 v3.4.0
 	github.com/pquerna/otp v1.5.0
 	github.com/pterm/pterm v0.12.83
 	golang.org/x/crypto v0.49.0

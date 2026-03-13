@@ -4,18 +4,17 @@ import (
 	"context"
 	"errors"
 
-	"github.com/jackc/pgx/v5/pgxpool"
 	gototp "github.com/pquerna/otp"
 	"github.com/pquerna/otp/totp"
 )
 
 // TOTPService handles generation, verification, and toggling of TOTP-based 2FA.
 type TOTPService struct {
-	db *pgxpool.Pool
+	db dbIface // defined in service.go — *pgxpool.Pool satisfies this
 }
 
 // NewTOTPService creates a new TOTP service.
-func NewTOTPService(db *pgxpool.Pool) *TOTPService {
+func NewTOTPService(db dbIface) *TOTPService {
 	return &TOTPService{db: db}
 }
 

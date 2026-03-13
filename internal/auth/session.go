@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 
-	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/rishant-tech/golang-cli-app/internal/models"
 )
 
@@ -12,11 +11,11 @@ var ErrSessionNotFound = errors.New("session not found or expired")
 
 // SessionService manages session lookup and invalidation.
 type SessionService struct {
-	db *pgxpool.Pool
+	db dbIface // defined in service.go — *pgxpool.Pool satisfies this
 }
 
 // NewSessionService creates a new session service.
-func NewSessionService(db *pgxpool.Pool) *SessionService {
+func NewSessionService(db dbIface) *SessionService {
 	return &SessionService{db: db}
 }
 

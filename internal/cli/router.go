@@ -55,7 +55,8 @@ func (r *Router) Run() {
 	defer r.rl.Close()
 
 	pterm.DefaultHeader.Println("GoLoginApp — Secure CLI Login System")
-	fmt.Println("Type 'help' to see available commands.\n")
+	fmt.Println("Type 'help' to see available commands.")
+	fmt.Println()
 
 	for {
 		line, err := r.rl.Readline()
