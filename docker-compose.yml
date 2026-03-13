@@ -1,0 +1,30 @@
+services:
+  app:
+    build: .
+    stdin_open: true   # required for interactive CLI input
+    tty: true          # required for readline prompt rendering
+    depends_on:
+      postgres:
+        condition: service_healthy   # wait until postgres is ready
+    environment:
+      DB_URL: postgres://user:pass@postgres:5432/loginapp?sslmode=disable
+      SESSION_TIMEOUT: 30m
+      MAX_FAILED_ATTEMPTS: "5"
+      LOCKOUT_DURATION: 15m
+
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: pass
+      POSTGRES_DB: loginapp
+    volumes:
+      - pgdata:/var/lib/postgresql/data   # persists data across container restarts
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U user -d loginapp"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  pgdata:
